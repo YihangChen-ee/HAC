@@ -5,7 +5,7 @@
 [Mehrtash Harandi](https://sites.google.com/site/mehrtashharandi/),
 [Weiyao Lin](https://weiyaolin.github.io)
 
-[[`Arxiv`](...)] [[`Github`](...)]
+[[`Arxiv`](...)] [[`Github`](https://github.com/YihangChen-ee/HAC_release)]
 
 
 ## Overview
@@ -21,6 +21,7 @@ where an adaptive quantization module is proposed to enable high-precision quant
  Additionally, we incorporate an adaptive masking strategy to eliminate invalid Gaussians and anchors. 
 Importantly, our work is the pioneer to explore context-based compression for 3DGS representation, resulting in a remarkable size reduction.
 
+## Performance
 <p align="left">
 <img src="assets/main_performance.png" width=80% height=80% 
 class="center">
@@ -73,18 +74,24 @@ data/
 ...
 ```
 
+ - For instance: `./data/blending/drjohnson/`
+ - For instance: `./data/bungeenerf/amsterdam/`
+ - For instance: `./data/mipnerf360/bicycle/`
+ - For instance: `./data/nerf_synthetic/chair/`
+ - For instance: `./data/randt/train/`
 
-### Public Data (We follow [Scaffold-GS](https://github.com/city-super/Scaffold-GS))
 
-The BungeeNeRF dataset is available in [Google Drive](https://drive.google.com/file/d/1nBLcf9Jrr6sdxKa1Hbd47IArQQ_X8lww/view?usp=sharing)/[百度网盘[提取码:4whv]](https://pan.baidu.com/s/1AUYUJojhhICSKO2JrmOnCA). The MipNeRF360 scenes are provided by the paper author [here](https://jonbarron.info/mipnerf360/). And we test on scenes ```bicycle, bonsai, counter, garden, kitchen, room, stump```. The SfM data sets for Tanks&Temples and Deep Blending are hosted by 3D-Gaussian-Splatting [here](https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/datasets/input/tandt_db.zip). Download and uncompress them into the ```data/``` folder.
+### Public Data (We follow suggestions from [Scaffold-GS](https://github.com/city-super/Scaffold-GS))
+
+ - The **BungeeNeRF** dataset is available in [Google Drive](https://drive.google.com/file/d/1nBLcf9Jrr6sdxKa1Hbd47IArQQ_X8lww/view?usp=sharing)/[百度网盘[提取码:4whv]](https://pan.baidu.com/s/1AUYUJojhhICSKO2JrmOnCA). 
+ - The **MipNeRF360** scenes are provided by the paper author [here](https://jonbarron.info/mipnerf360/). And we test on scenes ```bicycle, bonsai, counter, garden, kitchen, room, stump, flowers, treehill```. 
+ - The SfM data sets for **Tanks&Temples** and **Deep Blending** are hosted by 3D-Gaussian-Splatting [here](https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/datasets/input/tandt_db.zip). Download and uncompress them into the ```data/``` folder.
+
 ### Custom Data
 
 For custom data, you should process the image sequences with [Colmap](https://colmap.github.io/) to obtain the SfM points and camera poses. Then, place the results into ```data/``` folder.
 
-
 ## Training
-
-### Training scenes
 
 To train scenes, we provide the following training scripts: 
  - Tanks&Temples: ```run_shell_tnt.py```
@@ -99,12 +106,10 @@ To train scenes, we provide the following training scripts:
  ```
 
 The code will automatically run the entire process of: **training, encoding, decoding, testing**.
-
-Training log will be recorded in `output.log` of the output directory.
-
-Encoded bitstreams will be stored in `./bitstreams` of the output directory.
-
-Evaluated output images will be saved in `./test/ours_30000/renders` of the output directory.
+ - Training log will be recorded in `output.log` of the output directory. Results of **detailed fidelity, detailed size, detailed time** will all be recorded
+ - Encoded bitstreams will be stored in `./bitstreams` of the output directory.
+ - Evaluated output images will be saved in `./test/ours_30000/renders` of the output directory.
+ - Optionally, you can change `lmbda` in these `run_shell_xxx.py` scripts to try variable bitrate.
 
 
 ## Contact
@@ -132,5 +137,5 @@ Please follow the LICENSE of [3D-GS](https://github.com/graphdeco-inria/gaussian
 
 ## Acknowledgement
 
-We thank all authors from [3D-GS](https://github.com/graphdeco-inria/gaussian-splatting) for presenting such an excellent work.
-We thank all authors from [Scaffold-GS](https://github.com/city-super/Scaffold-GS) for presenting such an excellent work.
+ - We thank all authors from [3D-GS](https://github.com/graphdeco-inria/gaussian-splatting) for presenting such an excellent work.
+ - We thank all authors from [Scaffold-GS](https://github.com/city-super/Scaffold-GS) for presenting such an excellent work.

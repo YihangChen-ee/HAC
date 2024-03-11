@@ -14,11 +14,11 @@ dependencies:
   - torchvision=0.13.1
   - pytorch-scatter
   - tqdm
-  - torchac
   - pip:
     - einops
     - wandb
     - lpips
+    - torchac
     - submodules/diff-gaussian-rasterization
     - submodules/simple-knn
     - submodules/gridencoder
