@@ -1,7 +1,7 @@
 # HAC: Hash-grid Assisted Context for 3D Gaussian Splatting Compression
 [Yihang Chen](https://github.com/YihangChen-ee), 
 [Qianyi Wu](https://wuqianyi.top), 
-[Jianfei Cai](http://jianfei-cai.github.io),
+[Jianfei Cai](http://jianfei-cai.github.io)
 [Mehrtash Harandi](https://sites.google.com/site/mehrtashharandi/),
 [Weiyao Lin](https://weiyaolin.github.io)
 
@@ -78,14 +78,14 @@ data/
  - For instance: `./data/bungeenerf/amsterdam/`
  - For instance: `./data/mipnerf360/bicycle/`
  - For instance: `./data/nerf_synthetic/chair/`
- - For instance: `./data/randt/train/`
+ - For instance: `./data/tandt/train/`
 
 
 ### Public Data (We follow suggestions from [Scaffold-GS](https://github.com/city-super/Scaffold-GS))
 
  - The **BungeeNeRF** dataset is available in [Google Drive](https://drive.google.com/file/d/1nBLcf9Jrr6sdxKa1Hbd47IArQQ_X8lww/view?usp=sharing)/[百度网盘[提取码:4whv]](https://pan.baidu.com/s/1AUYUJojhhICSKO2JrmOnCA). 
- - The **MipNeRF360** scenes are provided by the paper author [here](https://jonbarron.info/mipnerf360/). And we test on scenes ```bicycle, bonsai, counter, garden, kitchen, room, stump, flowers, treehill```. 
- - The SfM data sets for **Tanks&Temples** and **Deep Blending** are hosted by 3D-Gaussian-Splatting [here](https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/datasets/input/tandt_db.zip). Download and uncompress them into the ```data/``` folder.
+ - The **MipNeRF360** scenes are provided by the paper author [here](https://jonbarron.info/mipnerf360/). And we test on its entire 9 scenes ```bicycle, bonsai, counter, garden, kitchen, room, stump, flowers, treehill```. 
+ - The SfM datasets for **Tanks&Temples** and **Deep Blending** are hosted by 3D-Gaussian-Splatting [here](https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/datasets/input/tandt_db.zip). Download and uncompress them into the ```data/``` folder.
 
 ### Custom Data
 
@@ -125,7 +125,7 @@ If you find our work helpful, please consider citing:
       title={xxx}, 
       author={Chen, Yihang and Wu, Qianyi Cai, Jianfei, Harandi, Mehrtash and Lin Weiyao},
       year={2024},
-      eprint={2312.00109},
+      eprint={xxx},
       archivePrefix={arXiv},
       primaryClass={cs.CV}
 }
