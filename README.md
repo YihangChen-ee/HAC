@@ -5,7 +5,7 @@
 [Mehrtash Harandi](https://sites.google.com/site/mehrtashharandi/),
 [Weiyao Lin](https://weiyaolin.github.io)
 
-[[`Arxiv`](...)] [[`Github`](https://github.com/YihangChen-ee/HAC_release)]
+[[`Arxiv`](...)] [[`Github`](https://github.com/YihangChen-ee/HAC)]
 
 
 ## Overview
