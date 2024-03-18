@@ -1,6 +1,6 @@
 # HAC: Hash-grid Assisted Context for 3D Gaussian Splatting Compression
 [Yihang Chen](https://github.com/YihangChen-ee), 
-[Qianyi Wu](https://wuqianyi.top), 
+[Qianyi Wu](https://qianyiwu.github.io), 
 [Jianfei Cai](http://jianfei-cai.github.io), 
 [Mehrtash Harandi](https://sites.google.com/site/mehrtashharandi/),
 [Weiyao Lin](https://weiyaolin.github.io)
