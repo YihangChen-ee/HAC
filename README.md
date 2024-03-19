@@ -123,7 +123,7 @@ If you find our work helpful, please consider citing:
 ```bibtex
 @misc{xxx,
       title={xxx}, 
-      author={Chen, Yihang and Wu, Qianyi Cai, Jianfei, Harandi, Mehrtash and Lin Weiyao},
+      author={Y. Chen, Q. Wu, J. Cai, M. Harandi, and W. Lin},
       year={2024},
       eprint={xxx},
       archivePrefix={arXiv},
