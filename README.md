@@ -1,11 +1,11 @@
 # HAC: Hash-grid Assisted Context for 3D Gaussian Splatting Compression
-[Yihang Chen](https://github.com/YihangChen-ee), 
+[Yihang Chen](https://yihangchen-ee.github.io), 
 [Qianyi Wu](https://qianyiwu.github.io), 
 [Jianfei Cai](http://jianfei-cai.github.io), 
 [Mehrtash Harandi](https://sites.google.com/site/mehrtashharandi/),
 [Weiyao Lin](https://weiyaolin.github.io)
 
-[[`Arxiv`](...)] [[`Github`](https://github.com/YihangChen-ee/HAC)]
+[[`Arxiv`](...)] [[`Project Page`](https://yihangchen-ee.github.io/project_hac/)] [[`Github`](https://github.com/YihangChen-ee/HAC)]
 
 
 ## Overview
@@ -121,13 +121,11 @@ The code will automatically run the entire process of: **training, encoding, dec
 If you find our work helpful, please consider citing:
 
 ```bibtex
-@misc{xxx,
-      title={xxx}, 
-      author={Y. Chen, Q. Wu, J. Cai, M. Harandi, and W. Lin},
-      year={2024},
-      eprint={xxx},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
+@article{hac2024,
+  author    = {Yihang Chen, Qianyi Wu, Jianfei Cai, Mehrtash Harandi, and Weiyao Lin},
+  title     = {HAC: Hash-grid Assisted Context for 3D Gaussian Splatting Compression},
+  journal   = {arXiv},
+  year      = {2024},
 }
 ```
 
