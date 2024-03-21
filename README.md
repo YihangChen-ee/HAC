@@ -122,7 +122,7 @@ If you find our work helpful, please consider citing:
 
 ```bibtex
 @article{hac2024,
-  author    = {Yihang Chen, Qianyi Wu, Jianfei Cai, Mehrtash Harandi, and Weiyao Lin},
+  author    = {Yihang, Chen and Qianyi, Wu and Jianfei, Cai and Mehrtash, Harandi and Weiyao, Lin},
   title     = {HAC: Hash-grid Assisted Context for 3D Gaussian Splatting Compression},
   journal   = {arXiv},
   year      = {2024},
