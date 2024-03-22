@@ -5,7 +5,7 @@
 [Mehrtash Harandi](https://sites.google.com/site/mehrtashharandi/),
 [Weiyao Lin](https://weiyaolin.github.io)
 
-[[`Arxiv`](...)] [[`Project Page`](https://yihangchen-ee.github.io/project_hac/)] [[`Github`](https://github.com/YihangChen-ee/HAC)]
+[[`Arxiv`](https://arxiv.org/abs/2403.14530)] [[`Project Page`](https://yihangchen-ee.github.io/project_hac/)] [[`Github`](https://github.com/YihangChen-ee/HAC)]
 
 
 ## Overview
@@ -124,7 +124,7 @@ If you find our work helpful, please consider citing:
 @article{hac2024,
   author    = {Yihang, Chen and Qianyi, Wu and Jianfei, Cai and Mehrtash, Harandi and Weiyao, Lin},
   title     = {HAC: Hash-grid Assisted Context for 3D Gaussian Splatting Compression},
-  journal   = {arXiv},
+  journal   = {arXiv preprint arXiv:2403.14530},
   year      = {2024},
 }
 ```
