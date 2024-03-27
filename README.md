@@ -110,7 +110,7 @@ The code will automatically run the entire process of: **training, encoding, dec
  - Encoded bitstreams will be stored in `./bitstreams` of the output directory.
  - Evaluated output images will be saved in `./test/ours_30000/renders` of the output directory.
  - Optionally, you can change `lmbda` in these `run_shell_xxx.py` scripts to try variable bitrate.
-- <font color="orange">After training, the original model `point_cloud.ply` is losslessly compressed as `./bitstreams`. You should refer to `./bitstreams` to get the final model size, but not `point_cloud.ply`. You can also delete `point_cloud.ply` if you like :). </font>
+ - **After training, the original model `point_cloud.ply` is losslessly compressed as `./bitstreams`. You should refer to `./bitstreams` to get the final model size, but not `point_cloud.ply`. You can also delete `point_cloud.ply` if you like :).**
 
 
 ## Contact
