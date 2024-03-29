@@ -16,7 +16,7 @@ dependencies:
   - tqdm
   - pip:
     - einops
-    - wandb
+    - wandb==0.16.4
     - lpips
     - torchac
     - submodules/diff-gaussian-rasterization
