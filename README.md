@@ -1,4 +1,6 @@
-# HAC: Hash-grid Assisted Context for 3D Gaussian Splatting Compression
+# [ARXIV'24] HAC
+Official Pytorch implementation of **HAC: Hash-grid Assisted Context for 3D Gaussian Splatting Compression**.
+
 [Yihang Chen](https://yihangchen-ee.github.io), 
 [Qianyi Wu](https://qianyiwu.github.io), 
 [Jianfei Cai](http://jianfei-cai.github.io), 
@@ -7,6 +9,8 @@
 
 [[`Arxiv`](https://arxiv.org/abs/2403.14530)] [[`Project Page`](https://yihangchen-ee.github.io/project_hac/)] [[`Github`](https://github.com/YihangChen-ee/HAC)]
 
+## Links
+🎉 [CNC](https://github.com/yihangchen-ee/cnc/) [CVPR'24] is now released for efficient NeRF compression! [[`Arxiv`](...)] [[`Project Page`](https://yihangchen-ee.github.io/project_cnc/)] [[`Github`](https://github.com/YihangChen-ee/CNC)]
 
 ## Overview
 <p align="left">
