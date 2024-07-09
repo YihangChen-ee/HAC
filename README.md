@@ -3,9 +3,9 @@ Official Pytorch implementation of **HAC: Hash-grid Assisted Context for 3D Gaus
 
 [Yihang Chen](https://yihangchen-ee.github.io), 
 [Qianyi Wu](https://qianyiwu.github.io), 
-[Jianfei Cai](http://jianfei-cai.github.io), 
+[Weiyao Lin](https://weiyaolin.github.io),
 [Mehrtash Harandi](https://sites.google.com/site/mehrtashharandi/),
-[Weiyao Lin](https://weiyaolin.github.io)
+[Jianfei Cai](http://jianfei-cai.github.io)
 
 [[`Arxiv`](https://arxiv.org/abs/2403.14530)] [[`Project Page`](https://yihangchen-ee.github.io/project_hac/)] [[`Github`](https://github.com/YihangChen-ee/HAC)]
 
@@ -128,7 +128,7 @@ If you find our work helpful, please consider citing:
 ```bibtex
 @inproceedings{hac2024,
   title={HAC: Hash-grid Assisted Context for 3D Gaussian Splatting Compression},
-  author={Chen, Yihang and Wu, Qianyi and Cai, Jianfei and Harandi, Mehrtash and Lin, Weiyao},
+  author={Chen, Yihang and Wu, Qianyi and Lin, Weiyao and Harandi, Mehrtash and Cai, Jianfei},
   booktitle={European Conference on Computer Vision},
   year={2024}
 }
