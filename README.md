@@ -10,7 +10,9 @@ Official Pytorch implementation of **HAC: Hash-grid Assisted Context for 3D Gaus
 [[`Paper`](https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/01178.pdf)] [[`Arxiv`](https://arxiv.org/abs/2403.14530)] [[`Project`](https://yihangchen-ee.github.io/project_hac/)] [[`Github`](https://github.com/YihangChen-ee/HAC)]
 
 ## Links
+Welcome to check a series of works from our group on 3D radiance field representation compression as listed below:
 - 🎉 [CNC](https://github.com/yihangchen-ee/cnc/) [CVPR'24] is now released for efficient NeRF compression! [[`Paper`](https://openaccess.thecvf.com/content/CVPR2024/papers/Chen_How_Far_Can_We_Compress_Instant-NGP-Based_NeRF_CVPR_2024_paper.pdf)] [[`Arxiv`](https://arxiv.org/abs/2406.04101)] [[`Project`](https://yihangchen-ee.github.io/project_cnc/)]
+- 🏠 [HAC](https://github.com/yihangchen-ee/hac/) [ECCV'24] is now released for efficient 3DGS compression! [[`Paper`](https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/01178.pdf)] [`Arxiv`](https://arxiv.org/abs/2403.14530)] [[`Project`](https://yihangchen-ee.github.io/project_hac/)]
 - 🚀 [FCGS](https://github.com/yihangchen-ee/fcgs/) [ARXIV'24] is now released for fast optimization-free 3DGS compression! (stay tuned) [[`Arxiv`](https://arxiv.org/abs/xxxx.xxxxx)] [[`Project`](https://yihangchen-ee.github.io/project_fcgs/)]
 
 ## Overview
