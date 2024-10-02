@@ -11,7 +11,7 @@ Official Pytorch implementation of **HAC: Hash-grid Assisted Context for 3D Gaus
 
 ## Links
 - 🎉 [CNC](https://github.com/yihangchen-ee/cnc/) [CVPR'24] is now released for efficient NeRF compression! [[`Paper`](https://openaccess.thecvf.com/content/CVPR2024/papers/Chen_How_Far_Can_We_Compress_Instant-NGP-Based_NeRF_CVPR_2024_paper.pdf)] [[`Arxiv`](https://arxiv.org/abs/2406.04101)] [[`Project`](https://yihangchen-ee.github.io/project_cnc/)]
-- 🚀 [FCGS](https://github.com/yihangchen-ee/fcgs/) [ARXIV'24] is now released for fast optimization-free 3DGS compression! [[`Arxiv`](https://arxiv.org/abs/xxxx.xxxxx)] [[`Project`](https://yihangchen-ee.github.io/project_fcgs/)]
+- 🚀 [FCGS](https://github.com/yihangchen-ee/fcgs/) [ARXIV'24] is now released for fast optimization-free 3DGS compression! (stay tuned) [[`Arxiv`](https://arxiv.org/abs/xxxx.xxxxx)] [[`Project`](https://yihangchen-ee.github.io/project_fcgs/)]
 
 ## Overview
 <p align="left">
