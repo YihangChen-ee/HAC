@@ -28,12 +28,13 @@ from utils.entropy_models import Entropy_bernoulli, Entropy_gaussian, Entropy_fa
 
 from utils.encodings import \
     STE_binary, STE_multistep, Quantize_anchor, \
-    GridEncoder, \
-    anchor_round_digits, Q_anchor, \
-    encoder_anchor, decoder_anchor, \
-    encoder, decoder, \
-    encoder_gaussian, decoder_gaussian, \
+    GridEncoder, Q_anchor, \
+    anchor_round_digits, \
     get_binary_vxl_size
+
+from utils.encodings_cuda import \
+    encoder, decoder, \
+    encoder_gaussian_chunk, decoder_gaussian_chunk
 
 bit2MB_scale = 8 * 1024 * 1024
 
@@ -122,7 +123,7 @@ class GaussianModel(nn.Module):
         self.rotation_activation = torch.nn.functional.normalize
 
     def __init__(self,
-                 feat_dim: int=32,
+                 feat_dim: int=50,
                  n_offsets: int=5,
                  voxel_size: float=0.01,
                  update_depth: int=3,
@@ -147,7 +148,6 @@ class GaussianModel(nn.Module):
               log2_hashmap_size_2D, resolutions_list_2D,
               ste_binary, ste_multistep, add_noise)
 
-        feat_dim = 50
         self.feat_dim = feat_dim
         self.n_offsets = n_offsets
         self.voxel_size = voxel_size
@@ -399,6 +399,11 @@ class GaussianModel(nn.Module):
             return self._anchor
         anchor, quantized_v = Quantize_anchor.apply(self._anchor, self.x_bound_min, self.x_bound_max)
         return anchor
+    
+    @property
+    def get_quantized_v(self):
+        anchor, quantized_v = Quantize_anchor.apply(self._anchor, self.x_bound_min, self.x_bound_max)
+        return quantized_v
 
     @torch.no_grad()
     def update_anchor_bound(self):
@@ -809,6 +814,7 @@ class GaussianModel(nn.Module):
     def anchor_growing(self, grads, threshold, offset_mask):
         init_length = self.get_anchor.shape[0]*self.n_offsets
         for i in range(self.update_depth):  # 3
+            # for self.update_depth=3, self.update_hierachy_factor=4: 2**0, 2**1, 2**2
             cur_threshold = threshold*((self.update_hierachy_factor//2)**i)
             candidate_mask = (grads >= cur_threshold)
             candidate_mask = torch.logical_and(candidate_mask, offset_mask)
@@ -825,6 +831,7 @@ class GaussianModel(nn.Module):
                 candidate_mask = torch.cat([candidate_mask, torch.zeros(length_inc, dtype=torch.bool, device='cuda')], dim=0)
             all_xyz = self.get_anchor.unsqueeze(dim=1) + self._offset * self.get_scaling[:, :3].unsqueeze(dim=1)
 
+            # for self.update_depth=3, self.update_hierachy_factor=4: 4**0, 4**1, 4**2
             size_factor = self.update_init_factor // (self.update_hierachy_factor**i)
             cur_size = self.voxel_size*size_factor
 
@@ -1081,35 +1088,26 @@ class GaussianModel(nn.Module):
         mask_anchor = self.get_mask_anchor
 
         _anchor = self.get_anchor[mask_anchor]
+        _quantized_v = self.get_quantized_v[mask_anchor]
         _feat = self._anchor_feat[mask_anchor]
         _grid_offsets = self._offset[mask_anchor]
         _scaling = self.get_scaling[mask_anchor]
         _mask = self.get_mask[mask_anchor]
 
+        # torch.save(_anchor, os.path.join(pre_path_name, 'anchor.pkl'))
+        _quantized_v = _quantized_v.cpu().detach().numpy().astype(np.uint16)
+        np.save(os.path.join(pre_path_name, '_quantized_v.npy'), _quantized_v)
+
         N = _anchor.shape[0]
-        MAX_batch_size = 1_000
+        MAX_batch_size = 1_0000
         steps = (N // MAX_batch_size) if (N % MAX_batch_size) == 0 else (N // MAX_batch_size + 1)
 
         bit_feat_list = []
         bit_scaling_list = []
         bit_offsets_list = []
-        anchor_infos_list = []
-        indices_list = []
-        min_feat_list = []
-        max_feat_list = []
-        min_scaling_list = []
-        max_scaling_list = []
-        min_offsets_list = []
-        max_offsets_list = []
-
-        feat_list = []
-        scaling_list = []
-        offsets_list = []
 
         hash_b_name = os.path.join(pre_path_name, 'hash.b')
         masks_b_name = os.path.join(pre_path_name, 'masks.b')
-
-        torch.save(_anchor, os.path.join(pre_path_name, 'anchor.pkl'))
 
         for s in range(steps):
             N_num = min(MAX_batch_size, N - s*MAX_batch_size)
@@ -1124,15 +1122,10 @@ class GaussianModel(nn.Module):
             Q_scaling = 0.001
             Q_offsets = 0.2
 
-            indices = torch.tensor(data=range(N_num), device='cuda', dtype=torch.long)  # [N_num]
-            anchor_infos = None
-            anchor_infos_list.append(anchor_infos)
-            indices_list.append(indices+N_start)
-
-            anchor_sort = _anchor[N_start:N_end][indices]  # [N_num, 3]
+            anchor_slice = _anchor[N_start:N_end]
 
             # encode feat
-            feat_context = self.calc_interp_feat(anchor_sort)  # [N_num, ?]
+            feat_context = self.calc_interp_feat(anchor_slice)  # [N_num, ?]
             # many [N_num, ?]
             mean, scale, mean_scaling, scale_scaling, mean_offsets, scale_offsets, Q_feat_adj, Q_scaling_adj, Q_offsets_adj = \
                 torch.split(self.get_grid_mlp(feat_context), split_size_or_sections=[self.feat_dim, self.feat_dim, 6, 6, 3 * self.n_offsets, 3 * self.n_offsets, 1, 1, 1], dim=-1)
@@ -1150,38 +1143,29 @@ class GaussianModel(nn.Module):
             Q_scaling = Q_scaling * (1 + torch.tanh(Q_scaling_adj))
             Q_offsets = Q_offsets * (1 + torch.tanh(Q_offsets_adj))
 
-            feat = _feat[N_start:N_end][indices].view(-1)  # [N_num*32]
+            feat = _feat[N_start:N_end].view(-1)  # [N_num*32]
             feat = STE_multistep.apply(feat, Q_feat, _feat.mean())
             torch.cuda.synchronize(); t0 = time.time()
-            bit_feat, min_feat, max_feat = encoder_gaussian(feat, mean, scale, Q_feat, file_name=feat_b_name)
+            bit_feat = encoder_gaussian_chunk(feat, mean, scale, Q_feat, file_name=feat_b_name)
             torch.cuda.synchronize(); t_codec += time.time() - t0
             bit_feat_list.append(bit_feat)
-            min_feat_list.append(min_feat)
-            max_feat_list.append(max_feat)
-            feat_list.append(feat)
 
-            scaling = _scaling[N_start:N_end][indices].view(-1)  # [N_num*6]
+            scaling = _scaling[N_start:N_end].view(-1)  # [N_num*6]
             scaling = STE_multistep.apply(scaling, Q_scaling, _scaling.mean())
             torch.cuda.synchronize(); t0 = time.time()
-            bit_scaling, min_scaling, max_scaling = encoder_gaussian(scaling, mean_scaling, scale_scaling, Q_scaling, file_name=scaling_b_name)
+            bit_scaling = encoder_gaussian_chunk(scaling, mean_scaling, scale_scaling, Q_scaling, file_name=scaling_b_name)
             torch.cuda.synchronize(); t_codec += time.time() - t0
             bit_scaling_list.append(bit_scaling)
-            min_scaling_list.append(min_scaling)
-            max_scaling_list.append(max_scaling)
-            scaling_list.append(scaling)
 
-            mask = _mask[N_start:N_end][indices]  # {0, 1}  # [N_num, K, 1]
+            mask = _mask[N_start:N_end]  # {0, 1}  # [N_num, K, 1]
             mask = mask.repeat(1, 1, 3).view(-1, 3*self.n_offsets).view(-1).to(torch.bool)  # [N_num*K*3]
-            offsets = _grid_offsets[N_start:N_end][indices].view(-1, 3*self.n_offsets).view(-1)  # [N_num*K*3]
+            offsets = _grid_offsets[N_start:N_end].view(-1, 3*self.n_offsets).view(-1)  # [N_num*K*3]
             offsets = STE_multistep.apply(offsets, Q_offsets, _grid_offsets.mean())
             offsets[~mask] = 0.0
             torch.cuda.synchronize(); t0 = time.time()
-            bit_offsets, min_offsets, max_offsets = encoder_gaussian(offsets[mask], mean_offsets[mask], scale_offsets[mask], Q_offsets[mask], file_name=offsets_b_name)
+            bit_offsets = encoder_gaussian_chunk(offsets[mask], mean_offsets[mask], scale_offsets[mask], Q_offsets[mask], file_name=offsets_b_name)
             torch.cuda.synchronize(); t_codec += time.time() - t0
             bit_offsets_list.append(bit_offsets)
-            min_offsets_list.append(min_offsets)
-            max_offsets_list.append(max_offsets)
-            offsets_list.append(offsets)
 
             torch.cuda.empty_cache()
 
@@ -1192,21 +1176,11 @@ class GaussianModel(nn.Module):
 
         hash_embeddings = self.get_encoding_params()  # {-1, 1}
         if self.ste_binary:
-            p = torch.zeros_like(hash_embeddings).to(torch.float32)
-            prob_hash = (((hash_embeddings + 1) / 2).sum() / hash_embeddings.numel()).item()
-            p[...] = prob_hash
-            bit_hash = encoder(hash_embeddings.view(-1), p.view(-1), file_name=hash_b_name)
+            bit_hash = encoder(((hash_embeddings.view(-1) + 1) / 2), file_name=hash_b_name)
         else:
-            prob_hash = 0
             bit_hash = hash_embeddings.numel()*32
 
-        indices = torch.cat(indices_list, dim=0)
-        assert indices.shape[0] == _mask.shape[0]
-        mask = _mask[indices]  # {0, 1}
-        p = torch.zeros_like(mask).to(torch.float32)
-        prob_masks = (mask.sum() / mask.numel()).item()
-        p[...] = prob_masks
-        bit_masks = encoder((mask * 2 - 1).view(-1), p.view(-1), file_name=masks_b_name)
+        bit_masks = encoder(_mask, file_name=masks_b_name)
 
         torch.cuda.synchronize(); t2 = time.time()
         print('encoding time:', t2 - t1)
@@ -1222,15 +1196,16 @@ class GaussianModel(nn.Module):
                    f"MLPs {round(self.get_mlp_size()[0]/bit2MB_scale, 4)}, " \
                    f"Total {round((bit_anchor + bit_feat + bit_scaling + bit_offsets + bit_hash + bit_masks + self.get_mlp_size()[0])/bit2MB_scale, 4)}, " \
                    f"EncTime {round(t2 - t1, 4)}"
-        return [self._anchor.shape[0], N, MAX_batch_size, anchor_infos_list, min_feat_list, max_feat_list, min_scaling_list, max_scaling_list, min_offsets_list, max_offsets_list, prob_hash, prob_masks], log_info
+        return [self._anchor.shape[0], N, MAX_batch_size], log_info
 
     @torch.no_grad()
     def conduct_decoding(self, pre_path_name, patched_infos):
         torch.cuda.synchronize(); t1 = time.time()
         print('Start decoding ...')
-        [N_full, N, MAX_batch_size, anchor_infos_list, min_feat_list, max_feat_list, min_scaling_list, max_scaling_list, min_offsets_list, max_offsets_list, prob_hash, prob_masks] = patched_infos
+        [N_full, N, MAX_batch_size] = patched_infos
         steps = (N // MAX_batch_size) if (N % MAX_batch_size) == 0 else (N // MAX_batch_size + 1)
 
+        xyz_decoded_list = []
         feat_decoded_list = []
         scaling_decoded_list = []
         offsets_decoded_list = []
@@ -1238,31 +1213,26 @@ class GaussianModel(nn.Module):
         hash_b_name = os.path.join(pre_path_name, 'hash.b')
         masks_b_name = os.path.join(pre_path_name, 'masks.b')
 
-        p = torch.zeros(size=[N, self.n_offsets, 1], device='cuda').to(torch.float32)
-        p[...] = prob_masks
-        masks_decoded = decoder(p.view(-1), masks_b_name)  # {-1, 1}
-        masks_decoded = (masks_decoded + 1) / 2  # {0, 1}
+        masks_decoded = decoder(N*self.n_offsets, masks_b_name)  # {0, 1}
         masks_decoded = masks_decoded.view(-1, self.n_offsets, 1)
 
         if self.ste_binary:
-            p = torch.zeros_like(self.get_encoding_params()).to(torch.float32)
-            p[...] = prob_hash
-            hash_embeddings = decoder(p.view(-1), hash_b_name)  # {-1, 1}
+            N_hash = torch.zeros_like(self.get_encoding_params()).numel()
+            hash_embeddings = decoder(N_hash, hash_b_name)  # {0, 1}
+            hash_embeddings = (hash_embeddings * 2 - 1).to(torch.float32)
             hash_embeddings = hash_embeddings.view(-1, self.n_features_per_level)
+
+        # anchor_decoded = torch.load(os.path.join(pre_path_name, 'anchor.pkl')).cuda()
+        _quantized_v_decoded = np.load(os.path.join(pre_path_name, '_quantized_v.npy')).astype(np.int32)
+        _quantized_v_decoded = torch.from_numpy(_quantized_v_decoded).cuda().to(torch.int32)
+        interval = ((self.x_bound_max - self.x_bound_min) * Q_anchor + 1e-6)  # avoid 0, if max_v == min_v
+        anchor_decoded = _quantized_v_decoded * interval + self.x_bound_min
 
         Q_feat_list = []
         Q_scaling_list = []
         Q_offsets_list = []
 
-        anchor_decoded = torch.load(os.path.join(pre_path_name, 'anchor.pkl')).cuda()
-
         for s in range(steps):
-            min_feat = min_feat_list[s]
-            max_feat = max_feat_list[s]
-            min_scaling = min_scaling_list[s]
-            max_scaling = max_scaling_list[s]
-            min_offsets = min_offsets_list[s]
-            max_offsets = max_offsets_list[s]
 
             N_num = min(MAX_batch_size, N - s*MAX_batch_size)
             N_start = s * MAX_batch_size
@@ -1277,7 +1247,8 @@ class GaussianModel(nn.Module):
             Q_offsets = 0.2
 
             # encode feat
-            feat_context = self.calc_interp_feat(anchor_decoded[N_start:N_end])  # [N_num, ?]
+            anchor_sort = anchor_decoded[N_start:N_end]
+            feat_context = self.calc_interp_feat(anchor_sort)  # [N_num, ?]
             # many [N_num, ?]
             mean, scale, mean_scaling, scale_scaling, mean_offsets, scale_offsets, Q_feat_adj, Q_scaling_adj, Q_offsets_adj = \
                 torch.split(self.get_grid_mlp(feat_context), split_size_or_sections=[self.feat_dim, self.feat_dim, 6, 6, 3 * self.n_offsets, 3 * self.n_offsets, 1, 1, 1], dim=-1)
@@ -1299,20 +1270,22 @@ class GaussianModel(nn.Module):
             Q_scaling = Q_scaling * (1 + torch.tanh(Q_scaling_adj))
             Q_offsets = Q_offsets * (1 + torch.tanh(Q_offsets_adj))
 
-            feat_decoded = decoder_gaussian(mean, scale, Q_feat, file_name=feat_b_name, min_value=min_feat, max_value=max_feat)
+            feat_decoded = decoder_gaussian_chunk(mean, scale, Q_feat, file_name=feat_b_name)
             feat_decoded = feat_decoded.view(N_num, self.feat_dim)  # [N_num, 32]
             feat_decoded_list.append(feat_decoded)
 
-            scaling_decoded = decoder_gaussian(mean_scaling, scale_scaling, Q_scaling, file_name=scaling_b_name, min_value=min_scaling, max_value=max_scaling)
+            scaling_decoded = decoder_gaussian_chunk(mean_scaling, scale_scaling, Q_scaling, file_name=scaling_b_name)
             scaling_decoded = scaling_decoded.view(N_num, 6)  # [N_num, 6]
             scaling_decoded_list.append(scaling_decoded)
 
             masks_tmp = masks_decoded[N_start:N_end].repeat(1, 1, 3).view(-1, 3 * self.n_offsets).view(-1).to(torch.bool)
-            offsets_decoded_tmp = decoder_gaussian(mean_offsets[masks_tmp], scale_offsets[masks_tmp], Q_offsets[masks_tmp], file_name=offsets_b_name, min_value=min_offsets, max_value=max_offsets)
+            offsets_decoded_tmp = decoder_gaussian_chunk(mean_offsets[masks_tmp], scale_offsets[masks_tmp], Q_offsets[masks_tmp], file_name=offsets_b_name)
             offsets_decoded = torch.zeros_like(mean_offsets)
             offsets_decoded[masks_tmp] = offsets_decoded_tmp
             offsets_decoded = offsets_decoded.view(N_num, -1).view(N_num, self.n_offsets, 3)  # [N_num, K, 3]
             offsets_decoded_list.append(offsets_decoded)
+
+            xyz_decoded_list.append(anchor_sort)
 
             torch.cuda.empty_cache()
 
