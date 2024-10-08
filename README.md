@@ -15,6 +15,9 @@ Welcome to check a series of works from our group on 3D radiance field represent
 - 🏠 [HAC](https://github.com/yihangchen-ee/hac/) [ECCV'24] is now released for efficient 3DGS compression! [[`Paper`](https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/01178.pdf)] [`Arxiv`](https://arxiv.org/abs/2403.14530)] [[`Project`](https://yihangchen-ee.github.io/project_hac/)]
 - 🚀 [FCGS](https://github.com/yihangchen-ee/fcgs/) [ARXIV'24] is now released for fast optimization-free 3DGS compression! (stay tuned) [[`Arxiv`](https://arxiv.org/abs/xxxx.xxxxx)] [[`Project`](https://yihangchen-ee.github.io/project_fcgs/)]
 
+## Updates
+🔥8/Aug/2024: HAC now utilizes a ```cuda-based codec``` instead of the original ```torchac```, which significantly improves the codec runtime by over ```10``` times!
+
 ## Overview
 <p align="left">
 <img src="assets/teaser.png" width=80% height=80% 
@@ -44,6 +47,7 @@ cd submodules
 unzip diff-gaussian-rasterization.zip
 unzip gridencoder.zip
 unzip simple-knn.zip
+unzip arithmetic.zip
 cd ..
 ```
 2. Install environment
