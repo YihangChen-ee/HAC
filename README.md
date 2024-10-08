@@ -16,7 +16,7 @@ Welcome to check a series of works from our group on 3D radiance field represent
 - 🚀 [FCGS](https://github.com/yihangchen-ee/fcgs/) [ARXIV'24] is now released for fast optimization-free 3DGS compression! (stay tuned) [[`Arxiv`](https://arxiv.org/abs/xxxx.xxxxx)] [[`Project`](https://yihangchen-ee.github.io/project_fcgs/)]
 
 ## Updates
-🔥8/Aug/2024: HAC now utilizes a ```cuda-based codec``` instead of the original ```torchac```, which significantly improves the codec runtime by over ```10``` times!
+🔥8-Aug-2024: HAC now utilizes a ```cuda-based codec``` instead of the original ```torchac```, which significantly reduces the codec runtime by over ```10``` times compared to that reported in the paper!
 
 ## Overview
 <p align="left">
