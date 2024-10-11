@@ -18,7 +18,6 @@ dependencies:
     - einops
     - wandb
     - lpips
-    - torchac
     - submodules/diff-gaussian-rasterization
     - submodules/simple-knn
     - submodules/gridencoder
