@@ -43,7 +43,7 @@ from tqdm import tqdm
 from utils.image_utils import psnr
 from argparse import ArgumentParser, Namespace
 from arguments import ModelParams, PipelineParams, OptimizationParams
-from utils.encodings import anchor_round_digits, Q_anchor, encoder_anchor, get_binary_vxl_size
+from utils.encodings import anchor_round_digits, Q_anchor, get_binary_vxl_size
 
 # torch.set_num_threads(32)
 # lpips_fn = lpips.LPIPS(net='vgg').to('cuda')
