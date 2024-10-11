@@ -1,5 +1,6 @@
 # [ECCV'24] HAC
 Official Pytorch implementation of **HAC: Hash-grid Assisted Context for 3D Gaussian Splatting Compression**.
+## We can compress 3D Gaussian Splatting 75X without fidelity drop!
 
 [Yihang Chen](https://yihangchen-ee.github.io), 
 [Qianyi Wu](https://qianyiwu.github.io), 
