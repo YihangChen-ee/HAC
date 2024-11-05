@@ -1099,7 +1099,7 @@ class GaussianModel(nn.Module):
         np.save(os.path.join(pre_path_name, '_quantized_v.npy'), _quantized_v)
 
         N = _anchor.shape[0]
-        MAX_batch_size = 1_000
+        MAX_batch_size = 3_000
         steps = (N // MAX_batch_size) if (N % MAX_batch_size) == 0 else (N // MAX_batch_size + 1)
 
         bit_feat_list = []
