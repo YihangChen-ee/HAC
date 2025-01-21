@@ -139,7 +139,7 @@ If you find our work helpful, please consider citing:
 @article{hac++2025,
   title={HAC++: Towards 100X Compression of 3D Gaussian Splatting},
   author={Chen, Yihang and Wu, Qianyi and Lin, Weiyao and Harandi, Mehrtash and Cai, Jianfei},
-  journal={arXiv preprint arXiv:xxxxx (TBD)},
+  journal={arXiv preprint},
   year={2025}
 }
 ```
