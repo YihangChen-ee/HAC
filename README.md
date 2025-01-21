@@ -136,6 +136,14 @@ The code will automatically run the entire process of: **training, encoding, dec
 If you find our work helpful, please consider citing:
 
 ```bibtex
+@article{hac++2025,
+  title={HAC++: Towards 100X Compression of 3D Gaussian Splatting},
+  author={Chen, Yihang and Wu, Qianyi and Lin, Weiyao and Harandi, Mehrtash and Cai, Jianfei},
+  journal={arXiv preprint arXiv:xxxxx (TBD)},
+  year={2025}
+}
+```
+```bibtex
 @inproceedings{hac2024,
   title={HAC: Hash-grid Assisted Context for 3D Gaussian Splatting Compression},
   author={Chen, Yihang and Wu, Qianyi and Lin, Weiyao and Harandi, Mehrtash and Cai, Jianfei},
